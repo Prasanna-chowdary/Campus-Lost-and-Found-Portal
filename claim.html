@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block body %}
+<section class="panel narrow"><h1>Your claim on "{{ it.title }}"</h1>
+{% if c.status=='new' %}<p class="status wait">Waiting for the poster to review your answer. Bookmark this page and check back.</p>
+{% elif c.status=='approved' %}<p class="status ok">Approved. Hand-over spot:</p><p class="reveal">{{ it.contact_hint or 'The poster did not add a spot. Ask campus security to help arrange it.' }}</p><p class="muted">Bring a student ID and meet in a public place.</p>
+{% else %}<p class="status no">The poster declined this claim. If you think that's a mistake, visit the security desk.</p>{% endif %}
+<p class="muted">Anyone with this link can see this page, so keep it to yourself.</p></section>{% endblock %}
