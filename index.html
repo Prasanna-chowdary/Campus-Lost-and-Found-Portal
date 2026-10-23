@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block body %}
+<section class="hero"><h1>Lost it on campus?<br>Let it find its way back.</h1>
+<p>{{ counts.lost }} lost and {{ counts.found }} found items are listed right now, and {{ counts.returned }} have already gone home.</p>
+<form class="search" method="get"><input name="q" value="{{ q }}" placeholder="e.g. rucksack red zip, phone blue cover" aria-label="Search items">
+<select name="kind" aria-label="Lost or found"><option value="">Lost &amp; found</option><option value="lost" {{ 'selected' if kind=='lost' }}>Lost</option><option value="found" {{ 'selected' if kind=='found' }}>Found</option></select>
+<select name="category" aria-label="Category"><option value="">Any category</option>{% for c in cats %}<option {{ 'selected' if c==cat }}>{{ c }}</option>{% endfor %}</select>
+<select name="place" aria-label="Place"><option value="">Anywhere</option>{% for p in places %}<option {{ 'selected' if p==place }}>{{ p }}</option>{% endfor %}</select>
+<select name="days" aria-label="Posted"><option value="0">Any time</option><option value="3" {{ 'selected' if days=='3' }}>Last 3 days</option><option value="7" {{ 'selected' if days=='7' }}>Last 7 days</option></select>
+<select name="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old" {{ 'selected' if sort=='old' }}>Oldest first</option></select>
+<button class="btn ink">Search</button><button class="btn ghost" formmethod="post" formaction="{{ url_for('watch') }}">Alert me</button></form></section>
+{% for wq, n in alerts %}<div class="flash ok">{{ n }} new post{{ 's' if n>1 }} match your alert "{{ wq }}".</div>{% endfor %}
+{% if watching %}<form method="post" action="{{ url_for('watch_clear') }}"><button class="linkbtn">Turn off my alerts</button></form>{% endif %}
+{% if items %}<section class="grid">{% for i in items %}
+<a class="tag {{ i.kind }}" href="{{ url_for('item', iid=i.id) }}"><span class="string"></span><span class="hole"></span>
+{% if i.photo %}<img class="ph" src="{{ url_for('static', filename='uploads/' ~ i.photo) }}" alt="">{% endif %}
+<b class="kind">{{ 'Lost' if i.kind=='lost' else 'Found' }}</b><h2>{{ i.title }}</h2><p>{{ i.description[:90] }}{% if i.description|length>90 %}...{% endif %}</p>
+<small>{{ i.category }}, {{ i.place }}, {{ i.date|ago }}</small></a>{% endfor %}</section>
+{% else %}<div class="empty"><h2>Nothing matches that yet</h2><p>Try fewer words or clear a filter. Still missing? Post it so a finder can spot it.</p></div>{% endif %}{% endblock %}
