@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block body %}
+<section class="panel narrow"><h1>{{ 'Report a lost item' if kind=='lost' else 'Post a found item' }}</h1>
+<p class="muted">A moderator reviews every post before it goes live. Don't type phone numbers or emails: you'll control who gets your meeting details.</p>
+<form method="post" enctype="multipart/form-data" class="form">
+<label>Item name<input name="title" required maxlength="80" value="{{ f.title }}" placeholder="Black backpack with red zipper"></label>
+<label>Describe it<textarea name="description" required rows="4" maxlength="400" placeholder="Brand, colour, stickers, marks, what's inside">{{ f.description }}</textarea></label>
+<div class="row"><label>Category<select name="category" required>{% for c in cats %}<option {{ 'selected' if c==f.category }}>{{ c }}</option>{% endfor %}</select></label>
+<label>Place<select name="place" required>{% for p in places %}<option {{ 'selected' if p==f.place }}>{{ p }}</option>{% endfor %}</select></label>
+<label>Date<input type="date" name="date" required value="{{ f.date }}"></label></div>
+<label>{{ 'A detail only the owner would know (kept private)' if kind=='found' else 'A detail only you would know (kept private)' }}<input name="secret_detail" required value="{{ f.secret_detail }}" placeholder="{{ 'Write a question the owner must answer, e.g. What is inside the front pocket?' if kind=='found' else 'e.g. Sticker colour inside the lid' }}"></label>
+<label>Photo (optional, helps a lot). Avoid faces and ID numbers.<input type="file" name="photo" accept="image/*" id="photo"></label><img id="pvw" class="ph" hidden alt="Photo preview">
+<label>Where could you hand it over? (shown only to approved claimants)<input name="contact_hint" value="{{ f.contact_hint }}" placeholder="Security desk, Main Block, 10am-4pm"></label>
+<button class="btn {{ kind }}">Send for review</button></form></section>
+<script>document.getElementById("photo").onchange=function(){var f=this.files[0];if(!f)return;var p=document.getElementById("pvw");p.src=URL.createObjectURL(f);p.hidden=false}</script>{% endblock %}
