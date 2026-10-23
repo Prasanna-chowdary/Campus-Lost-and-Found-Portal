@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<section class="panel narrow"><div class="tag big {{ it.kind }}"><span class="hole"></span><b class="kind">{{ 'Lost' if it.kind=='lost' else 'Found' }}</b><h1>{{ it.title }}</h1><p>{{ it.description }}</p><small>{{ it.category }}, {{ it.place }}, {{ it.date|ago }}</small>{% if it.photo %}<img class="ph" style="margin-top:.8rem" src="{{ url_for('static', filename='uploads/' ~ it.photo) }}" alt="Item photo">{% endif %}</div>
+<h2>{{ 'Is this yours?' if it.kind=='found' else 'Did you find this?' }}</h2>
+<p class="muted">Send a claim. The poster sees your answer, not your contact details, and decides whether to share a meeting spot.</p>
+<form method="post" action="{{ url_for('claim', iid=it.id) }}" class="form">
+<label>Your name<input name="claimant" required maxlength="60"></label>
+<label>{{ 'Prove it: ' ~ it.secret_detail if it.kind=='found' else 'Tell the owner something that shows you have it. Their check: ' ~ it.secret_detail }}<textarea name="proof" required rows="3" maxlength="300"></textarea></label>
+<label>Where could you meet? (optional, no phone or email)<input name="reply_hint" maxlength="120" placeholder="Library entrance after 4pm"></label>
+<button class="btn ink">Send claim</button></form>
+<form method="post" action="{{ url_for('flag', iid=it.id) }}"><button class="linkbtn">Report this post to moderators</button></form></section>{% endblock %}
