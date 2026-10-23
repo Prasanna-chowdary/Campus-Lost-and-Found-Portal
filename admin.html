@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block body %}
+<section class="panel narrow"><h1>Moderation queue</h1>
+{% if queue is none %}<form method="post" class="form"><label>Password<input type="password" name="password" required></label><button class="btn ink">Sign in</button></form>
+{% else %}<p class="muted">Every new post waits here. Approve to publish it, or reject it with a reason.</p>
+{% for i in queue %}<div class="suggest"><div>{% if i.photo %}<img class="ph" src="{{ url_for('static', filename='uploads/' ~ i.photo) }}" alt="">{% endif %}<b>{{ i.kind|capitalize }}: {{ i.title }}</b><p>{{ i.description }}</p><small>{{ i.category }}, {{ i.place }}, {{ i.date }}</small></div>
+<form method="post" action="{{ url_for('moderate', iid=i.id, action='approve') }}"><button class="btn found">Approve</button></form>
+<form method="post" action="{{ url_for('moderate', iid=i.id, action='reject') }}"><input name="reason" placeholder="Reason" required><button class="btn ghost">Reject</button></form></div>
+{% else %}<div class="empty"><h2>Queue is clear</h2><p>New posts will show up here.</p></div>{% endfor %}
+{% if flagged %}<h2>Reported by students</h2>{% for i in flagged %}<div class="suggest"><div><b>{{ i.title }}</b> <span class="score">{{ i.n }} report{{ 's' if i.n>1 }}</span><p>{{ i.description }}</p></div>
+<form method="post" action="{{ url_for('moderate_flag', iid=i.id, action='remove') }}"><button class="btn lost">Remove post</button></form>
+<form method="post" action="{{ url_for('moderate_flag', iid=i.id, action='keep') }}"><button class="btn ghost">Keep post</button></form></div>{% endfor %}{% endif %}{% endif %}</section>{% endblock %}
