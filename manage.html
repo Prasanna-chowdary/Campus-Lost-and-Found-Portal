@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block body %}
+<section class="panel narrow"><h1>Manage your post</h1>
+{% if new %}<div class="flash ok">Sent for review. <b>Save this page's link</b>. It's the only way to manage the post, and we never email it.</div>{% endif %}
+<div class="tag big {{ it.kind }}"><span class="hole"></span><b class="kind">{{ it.kind|capitalize }}</b><h2>{{ it.title }}</h2><p>{{ it.description }}</p>
+<small>Status: <b>{{ it.status }}</b>{% if it.reject_reason %}: {{ it.reject_reason }}{% endif %}</small></div>
+{% if sugg %}<h2>Possible matches</h2><p class="muted">Suggested by description similarity. You decide: nothing is matched until you confirm.</p>
+{% for p, score in sugg %}<div class="suggest"><div><b>{{ p.title }}</b> <span class="score">{{ score }}% similar</span><p>{{ p.description }}</p><small>{{ p.place }}, {{ p.date }}</small>
+{% if ok.get(p.id) and (ok[p.id].lost_ok if it.kind=='found' else ok[p.id].found_ok) %}<p class="status ok">The other person confirmed too.</p>{% endif %}</div>
+<form method="post" action="{{ url_for('match', token=it.owner_token, other=p.id, action='confirm') }}"><button class="btn found">{{ 'Confirmed' if ok.get(p.id) and (ok[p.id].lost_ok if it.kind=='lost' else ok[p.id].found_ok) else 'This is it' }}</button></form>
+<form method="post" action="{{ url_for('match', token=it.owner_token, other=p.id, action='dismiss') }}"><button class="btn ghost">Not it</button></form></div>
+{% if ok.get(p.id) and ok[p.id].lost_ok and ok[p.id].found_ok %}<p class="status ok">Both sides confirmed. Use the claim form on the item page to arrange the hand-over.</p>{% endif %}{% endfor %}{% endif %}
+<h2>Claims ({{ claims|length }})</h2>{% for c in claims %}<div class="suggest"><div><b>{{ c.claimant }}</b> <span class="score">{{ c.status }}</span><p class="muted">Check: {{ it.secret_detail }}</p><p>"{{ c.proof }}"</p>{% if c.reply_hint %}<small>Suggested spot: {{ c.reply_hint }}</small>{% endif %}</div>
+{% if c.status=='new' %}<form method="post" action="{{ url_for('decide', token=it.owner_token, cid=c.id, action='approve') }}"><button class="btn found">Approve</button></form>
+<form method="post" action="{{ url_for('decide', token=it.owner_token, cid=c.id, action='reject') }}"><button class="btn ghost">Decline</button></form>{% endif %}</div>
+{% else %}<p class="muted">No claims yet.</p>{% endfor %}
+{% if it.status=='open' %}<form method="post" action="{{ url_for('returned', token=it.owner_token) }}"><button class="btn ink">Mark as returned</button></form>{% endif %}</section>{% endblock %}
