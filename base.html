@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Findr: Campus Lost & Found{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body>
+<header class="top"><a class="logo" href="{{ url_for('home') }}"><span class="hole"></span>Findr</a>
+<nav><a href="{{ url_for('home') }}">Browse</a><a href="{{ url_for('rules') }}">Rules</a><a href="{{ url_for('admin') }}">Moderator</a><a class="btn lost" href="{{ url_for('report', kind='lost') }}">I lost something</a><a class="btn found" href="{{ url_for('report', kind='found') }}">I found something</a></nav></header>
+<main>{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}" role="status">{{ msg }}</div>{% endfor %}{% block body %}{% endblock %}</main>
+<footer>Your email and phone are never shown on Findr. <a href="{{ url_for('admin') }}">Moderator sign-in</a></footer></body></html>
